@@ -46,47 +46,27 @@ def login(clas, driver):
 
     time.sleep(3)
     time.sleep(1000)
-   # print("Searching for a join button")
-   # #Click on join button
-   # try:
-   #     input_ = driver.find_element_by_xpath('//*[@id="toast-container"]/div/div/div[2]/div/button[2]')
-   #     input_.click()
-   # except:
-   #     print("Join button not found")
-   #     return None
-   # #confirm audio
-   # print("Jound button, continuing")
-   # time.sleep(3)
-   # input_=driver.find_element_by_class_name("ts-calling-join-button")
-   # input_.click()
-   # time.sleep(3)
-   # input_=driver.find_element_by_class_name("join-btn")
-   # input_.click()
-   # print("Joined lecture")
-   # time.sleep(60*90)
-   # driver.close()
-   # print(f"Leaving lecture {time.localtime().tm_hour}:{time.localtime().tm_min}")
-   # return None
-
-
-
-
-
-
-#Should no longer be useful, but to be safe...
-#teamsdict = {#coords/starttime/endtime
-#    'AM_1w':[[2,2],[0,12,15],[0,15,30]],
-#    'PPJ_1w':[[2,3],[2,15,45],[2,17,15]],
-#    'PPJ_12c1':[[2,4],[3,10,15],[3,11,45]],
-#    'PPJ_12c2':[[2,4],[1,10,15],[1,11,45]],
-#    'TAK':[[3,3],[0,15,45],[0,17,15]],
-#    'HKJ':[[3,4],[2,8,30],[2,10,0]],
-#    'WDZ_1w':[[4,2],[2,14,0],[2,15,30]],
-#    'WSI_12c':[[4,3],[1,14,0],[1,15,30]],
-#    'AM_12c':[[4,4],[1,8,30],[1,10,0]],
-#    'WDZ_12c':[[5,2],[4,15,45],[4,17,15]],
-#    'test':[["team-2021W_wis_AM_1w_ang"],[0,1,50],[0,19,30]]
-#}
+    print("Searching for a join button")
+    Click on join button
+    try:
+        input_ = driver.find_element_by_xpath('//*[@id="toast-container"]/div/div/div[2]/div/button[2]')
+        input_.click()
+    except:
+        print("Join button not found")
+        return None
+    #confirm audio
+    print("Jound button, continuing")
+    time.sleep(3)
+    input_=driver.find_element_by_class_name("ts-calling-join-button")
+    input_.click()
+    time.sleep(3)
+    input_=driver.find_element_by_class_name("join-btn")
+    input_.click()
+    print("Joined lecture")
+    time.sleep(60*90)
+    driver.close()
+    print(f"Leaving lecture {time.localtime().tm_hour}:{time.localtime().tm_min}")
+    return None
 
 
 #  TODO
@@ -101,10 +81,6 @@ def pick_a_card(teamlabel,driver):
     for card in path:
         if card.get_attribute("data-tid") == teamlabel:
             card.click()
-
-
-
-
 
 #read credentials
 f = open(".pb", "r")
