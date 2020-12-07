@@ -24,15 +24,14 @@ def login(clas, driver):
 
     #window2 - logging for student mail
     driver.find_element_by_xpath('/html/body/div[2]/div[2]/div[1]/div[2]/div/div/form/div[2]/div[2]/input').send_keys(f"{crds[1]}")
-    #input_.send_keys(f"{crds[1]}")
     driver.find_element_by_xpath('/html/body/div[2]/div[2]/div[1]/div[2]/div/div/form/div[2]/div[4]/span').click()
     time.sleep(3)
 
     #window3 - dont stay signed in
-    input_ = driver.find_element_by_xpath('/html/body/div/form/div/div/div[1]/div[2]/div/div[2]/div/div[3]/div[2]/div/div/div[1]/input').click()
+    driver.find_element_by_xpath('/html/body/div/form/div/div/div[1]/div[2]/div/div[2]/div/div[3]/div[2]/div/div/div[1]/input').click()
     time.sleep(3)
     #window4 - yes use the fucking web app
-    input_ = driver.find_element_by_xpath('/html/body/promote-desktop/div/div/div/div[1]/div[2]/div/a').click()
+    driver.find_element_by_xpath('/html/body/promote-desktop/div/div/div/div[1]/div[2]/div/a').click()
     time.sleep(3)
 
     #find a team
@@ -60,7 +59,7 @@ def login(clas, driver):
     return None
 
 
-#  TODO
+#  TODO (actual one)
 #   1.Rework how time works.
 #   2.Make setup script to generate 'table' file from team cards in main screen of teams
 #   3.Make setup script autmatically obtain dates by parsing chat for scheduled meetings(feels like overengineering, but could be usefull as additional feature)
@@ -76,7 +75,7 @@ def pick_a_card(teamlabel,driver):
         except:
             continue
 #read credentials
-f = open(".pb", "r")
+f = open(".pb.txt", "r")
 crds = f.read()
 f.close()
 crds = crds.split(":",1)
