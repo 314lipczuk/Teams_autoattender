@@ -45,9 +45,8 @@ def login(clas, driver):
     pick_a_card(clas[0][0],driver)
 
     time.sleep(3)
-    time.sleep(1000)
     print("Searching for a join button")
-    Click on join button
+    #Click on join button
     try:
         input_ = driver.find_element_by_xpath('//*[@id="toast-container"]/div/div/div[2]/div/button[2]')
         input_.click()
@@ -79,9 +78,12 @@ def pick_a_card(teamlabel,driver):
     print(path)
     print(len(path))
     for card in path:
-        if card.get_attribute("data-tid") == teamlabel:
-            card.click()
-
+        try:
+            if card.get_attribute("data-tid") == teamlabel:
+                card.click()
+                print("Found card")
+        except:
+            continue
 #read credentials
 f = open(".pb", "r")
 crds = f.read()
