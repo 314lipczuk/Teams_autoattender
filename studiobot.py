@@ -13,32 +13,26 @@ def login(clas, driver):
     driver = webdriver.Chrome()
     #window1 - Yes i want to sign in
     driver.get("https://www.microsoft.com/en-ww/microsoft-365/microsoft-teams/log-in")
-    sign_button = driver.find_element_by_xpath('/html/body/section/div[2]/div/section/div/div[1]/div/div/div/div/div[1]/a')
-    sign_button.click()
+    driver.find_element_by_xpath('/html/body/section/div[2]/div/section/div/div[1]/div/div/div/div/div[1]/a').click()
     time.sleep(3)
 
     #window1 - give email
     driver.switch_to.window(driver.window_handles[1])
-    input_ = driver.find_element_by_xpath('/html/body/div/form[1]/div/div/div[1]/div[2]/div[2]/div/div/div/div[2]/div[2]/div/input[1]')
-    input_.send_keys(f"{crds[0]}")
-    signin_next = driver.find_element_by_xpath('/html/body/div/form[1]/div/div/div[1]/div[2]/div[2]/div/div/div/div[4]/div/div/div/div/input')
-    signin_next.click()
+    driver.find_element_by_xpath('/html/body/div/form[1]/div/div/div[1]/div[2]/div[2]/div/div/div/div[2]/div[2]/div/input[1]').send_keys(f"{crds[0]}")
+    driver.find_element_by_xpath('/html/body/div/form[1]/div/div/div[1]/div[2]/div[2]/div/div/div/div[4]/div/div/div/div/input').click()
     time.sleep(3)
 
     #window2 - logging for student mail
-    input_ = driver.find_element_by_xpath('/html/body/div[2]/div[2]/div[1]/div[2]/div/div/form/div[2]/div[2]/input')
-    input_.send_keys(f"{crds[1]}")
-    signin_next = driver.find_element_by_xpath('/html/body/div[2]/div[2]/div[1]/div[2]/div/div/form/div[2]/div[4]/span')
-    signin_next.click()
+    driver.find_element_by_xpath('/html/body/div[2]/div[2]/div[1]/div[2]/div/div/form/div[2]/div[2]/input').send_keys(f"{crds[1]}")
+    #input_.send_keys(f"{crds[1]}")
+    driver.find_element_by_xpath('/html/body/div[2]/div[2]/div[1]/div[2]/div/div/form/div[2]/div[4]/span').click()
     time.sleep(3)
 
     #window3 - dont stay signed in
-    input_ = driver.find_element_by_xpath('/html/body/div/form/div/div/div[1]/div[2]/div/div[2]/div/div[3]/div[2]/div/div/div[1]/input')
-    input_.click()
+    input_ = driver.find_element_by_xpath('/html/body/div/form/div/div/div[1]/div[2]/div/div[2]/div/div[3]/div[2]/div/div/div[1]/input').click()
     time.sleep(3)
     #window4 - yes use the fucking web app
-    input_ = driver.find_element_by_xpath('/html/body/promote-desktop/div/div/div/div[1]/div[2]/div/a')
-    input_.click()
+    input_ = driver.find_element_by_xpath('/html/body/promote-desktop/div/div/div/div[1]/div[2]/div/a').click()
     time.sleep(3)
 
     #find a team
@@ -47,23 +41,21 @@ def login(clas, driver):
     time.sleep(3)
     print("Searching for a join button")
     #Click on join button
-    try:
-        input_ = driver.find_element_by_xpath('//*[@id="toast-container"]/div/div/div[2]/div/button[2]')
-        input_.click()
-    except:
-        print("Join button not found")
-        return None
+    while( (time_.tm_hour>x[1][1])) and ((time_.tm_hour<=x[2][1] and time_.tm_min<x[2][2]) or time_.tm_hour<x[2][1]):
+         try:
+             driver.find_element_by_class_name("call-jump-in").click()
+             break
+         except:
+             print("Join button not found")
+             time.sleep(60)
     #confirm audio
-    print("Jound button, continuing")
+    print("Found button, continuing")
     time.sleep(3)
-    input_=driver.find_element_by_class_name("ts-calling-join-button")
-    input_.click()
-    time.sleep(3)
-    input_=driver.find_element_by_class_name("join-btn")
-    input_.click()
+    driver.find_element_by_class_name("join-btn").click()
     print("Joined lecture")
     time.sleep(60*90)
-    driver.close()
+    driver.quit()
+    driver = None
     print(f"Leaving lecture {time.localtime().tm_hour}:{time.localtime().tm_min}")
     return None
 
@@ -75,8 +67,7 @@ def login(clas, driver):
 
 def pick_a_card(teamlabel,driver):
     path = driver.find_elements_by_class_name("team-card")
-    print(path)
-    print(len(path))
+    print("Searching for appropriate team out of "+str(len(path)))
     for card in path:
         try:
             if card.get_attribute("data-tid") == teamlabel:
@@ -102,6 +93,6 @@ while True:
         time_ = time.localtime()
         if x[1][0] == time_.tm_wday:
             if ((time_.tm_hour==x[1][1] and time_.tm_min>=x[1][2]) or (time_.tm_hour>x[1][1])) and ((time_.tm_hour<=x[2][1] and time_.tm_min<x[2][2]) or time_.tm_hour<x[2][1]):
-                print('Found lecture up and running')
+                print("Activating...")
                 login(x, driver)
     time.sleep(60*5)
