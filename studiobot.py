@@ -5,10 +5,6 @@ import datetime
 from selenium.webdriver.common.keys import Keys
 import sys
 
-
-
-
-
 def login(clas, driver):
     driver = webdriver.Chrome()
     #window1 - Yes i want to sign in
