@@ -38,23 +38,27 @@ def login(clas):
         time.sleep(3)
         print("Searching for a join button")
         #Click on join button
-        while( (time_.tm_hour>x[1][1])) and ((time_.tm_hour<=x[2][1] and time_.tm_min<x[2][2]) or time_.tm_hour<x[2][1]):
-             try:
-                 driver.find_element_by_class_name("call-jump-in").click()
-                 break
-             except:
-                 print("Join button not found")
-                 time.sleep(60)
+        cnt =0
+        while cnt < 10:
+            try:
+                print("searching for button that says the call is on")
+                driver.find_element_by_class_name("call-jump-in").click()
+                print("button found")
+                break
+            except:
+                print("Join button not found. Attempt: ", cnt)
+                cnt +=1
+                time.sleep(60)
         #confirm audio
         try:
-            print("Found button, continuing")
             time.sleep(3)
             driver.find_element_by_class_name("join-btn").click()
             print("Joined lecture")
             time.sleep(60*90)
         except:
             print("Fucked up between confirming audio and joining")
-        driver.quit()
+        #driver.quit()
+        time.sleep(60*10)
         print(f"Leaving lecture {time.localtime().tm_hour}:{time.localtime().tm_min}")
         return None
     else:
@@ -72,7 +76,7 @@ def pick_a_card(teamlabel):
         try:
             if card.get_attribute("data-tid") == teamlabel:
                 card.click()
-                print("Found card")
+                print("Found team")
         except:
             continue
 #read credentials
@@ -83,10 +87,10 @@ crds = crds.split(":",1)
 crds[1] = crds[1][0:-1]
 
 #read table
-f = open("table.json", "r")
+f = open("table", "r")
 j = json.load(f)
 f.close()
-while __name__ =="main":
+while __name__ =="__main__":
     print(f"Looking for lecture, {time.localtime().tm_hour}:{time.localtime().tm_min}:{time.localtime().tm_sec}")
     for x in j.values():
         time_ = time.localtime()
