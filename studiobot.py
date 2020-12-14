@@ -41,9 +41,8 @@ def login(clas):
         cnt =0
         while cnt < 10:
             try:
-                print("searching for button that says the call is on")
                 driver.find_element_by_class_name("call-jump-in").click()
-                print("button found")
+                print("Button found")
                 break
             except:
                 print("Join button not found. Attempt: ", cnt)
@@ -57,8 +56,7 @@ def login(clas):
             time.sleep(60*90)
         except:
             print("Fucked up between confirming audio and joining")
-        #driver.quit()
-        time.sleep(60*10)
+        driver.quit()
         print(f"Leaving lecture {time.localtime().tm_hour}:{time.localtime().tm_min}")
         return None
     else:
