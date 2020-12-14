@@ -6,22 +6,33 @@ from studiobot import login
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 
+def creds():
+    f = open(".pb.txt", "w")
+    crds = input("Please input username for ms teams: ")
+    crds += ":"
+    crds += input("Please input password: ")
+    f.write(crds)
+    f.close()
+
+hlp = '''
 ###########################
 # This script is supposed to set up your credentials file and more importantly, your table file.
 # Second one is important, because that's where bot takes info about timestamps from.
 # Format of table file is [[date-tid of the team],[day,hour_of_start,minute_of_start],[day,hour_of_end,minute_of_end], ...] converted to json
+# Default use tries to create a table, if you use -c, it also takes your credentials 
 ###########################
+'''
+if sys.argv[1] == "-c":
+    creds()
+elif(sys.argv[1]=="-h" or "--help"):
+    print(hlp)
+
+
+driver = login(None)
 table=[]
 weekdays = ["Monday", "Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
-f = open(".pb.txt", "w")
-crds = input("Please input username for ms teams: ")
-crds += ":"
-crds += input("Please input password: ")
-f.write(crds)
-f.close()
-driver = login(None)
 all_cards = driver.find_elements_by_class_name("team-card")
-for x in range(len(all_cards)-1):
+for x in range(len(all_cards)):
     print("Chceking card nr: ", x+1)
     cards = driver.find_elements_by_class_name("team-card")
     card = cards[x]
@@ -44,6 +55,7 @@ for x in range(len(all_cards)-1):
     if(label[1]!="every"):
         print("format not yet supported")
         driver.back()
+        time.sleep(10)
         continue
     label=label[2:]
     #setting day 
@@ -65,13 +77,14 @@ for x in range(len(all_cards)-1):
     arr[2].append(stime[0])
     arr[2].append(stime[1])
     table.append(arr)
-    print(table)
     driver.back()
     time.sleep(10)
 
 
 tablejson=json.dumps(table)
-f = open("tablefile.json","w")
+f = open("table.json","w")
 f.write(tablejson)
 f.close()
 print("All done, check if it's all there")
+
+

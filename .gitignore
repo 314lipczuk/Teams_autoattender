@@ -1,3 +1,6 @@
 .idea/
 venv
 .pb.txt
+__pychache__
+__pycache__
+table.json

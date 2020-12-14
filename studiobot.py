@@ -30,7 +30,7 @@ def login(clas):
     #window4 - yes use the fucking web app
     driver.find_element_by_xpath('/html/body/promote-desktop/div/div/div/div[1]/div[2]/div/a').click()
     time.sleep(3)
-
+    driver.find_element_by_xpath('//*[@id="toast-container"]/div/div/div[2]/div/button[2]').click()
     if __name__ == "__main__":
         #find a team
         pick_a_card(clas[0][0])
@@ -63,8 +63,6 @@ def login(clas):
 
 #  TODO (actual one)
 #   1.Rework how time works.
-#   2.Make setup script to generate 'table' file from team cards in main screen of teams
-#   3.Make setup script autmatically obtain dates by parsing chat for scheduled meetings(feels like overengineering, but could be usefull as additional feature)
 
 
 def pick_a_card(teamlabel):
@@ -85,7 +83,7 @@ crds = crds.split(":",1)
 crds[1] = crds[1][0:-1]
 
 #read table
-f = open("table", "r")
+f = open("table.json", "r")
 j = json.load(f)
 f.close()
 while __name__ =="main":
