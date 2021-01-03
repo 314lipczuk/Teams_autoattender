@@ -2,6 +2,7 @@ from selenium import webdriver
 import json
 import sys
 import time
+import sqlite3
 from studiobot import login
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
@@ -14,6 +15,16 @@ def creds():
     f.write(crds)
     f.close()
 
+def setup_database():
+    conn = sqlite3.connect('table.db')
+    conn.execute('''CREATE TABLE TIMETABLE
+                 (label TEXT PRIMARY KEY   NOT NULL,
+                  day_of_the_week INT,
+                  starting_hour INT,
+                  starting_minute INT,
+                  lenght INT
+                  );''')
+
 hlp = '''
 ###########################
 # This script is supposed to set up your credentials file and more importantly, your table file.
@@ -22,11 +33,15 @@ hlp = '''
 # Default use tries to create a table, if you use -c, it also takes your credentials 
 ###########################
 '''
-if sys.argv[1] == "-c":
+if sys.argv[1] == ("--creds" or "-c"):
     creds()
-elif(sys.argv[1]=="-h" or "--help"):
+elif(sys.argv[1]==("-h" or "--help")):
     print(hlp)
-
+    exit()
+elif(sys.argv[1]==("-t" or "--table-setup")):
+    setup_database()
+    print("Database created")
+    exit()
 
 driver = login(None)
 table=[]
@@ -39,6 +54,7 @@ for x in range(len(all_cards)):
     arr = [[],[],[]]
     name = card.get_attribute("data-tid")
     arr[0].append(name)
+
     print("Operating on: "+ name)
     card.click()
     time.sleep(10)
@@ -80,11 +96,15 @@ for x in range(len(all_cards)):
     driver.back()
     time.sleep(10)
 
+conn = sqlite3.connect('table.db')
+for record in table:
+    conn.execute(f"INSERT INTO TIMETABLE ( label , day_of_the_week, starting_hour, starting_minute, lenght) VALUES ({record[0]},{record[1][0]},{record[1][1]},{record[1][2]},90)")
+conn.commit()
+print("Records created")
+conn.close()
 
 tablejson=json.dumps(table)
 f = open("table.json","w")
 f.write(tablejson)
 f.close()
-print("All done, check if it's all there")
-
-
+#print("All done, check if it's all there")

@@ -65,7 +65,7 @@ def login(clas):
 
 #  TODO (actual one)
 #   1.Rework how time works.
-
+#   2.Implement sqlite.
 
 def pick_a_card(teamlabel):
     path = driver.find_elements_by_class_name("team-card")
