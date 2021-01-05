@@ -1,8 +1,6 @@
 from selenium import webdriver
 import time
 import sqlite3
-from selenium.webdriver.common.keys import Keys
-import sys
 
 #setting up database stuff
 db = sqlite3.connect('table.db')
@@ -21,7 +19,7 @@ def set_timer(hr=24, min=0):
     t=((hours * 60)+mins)*60
     time.sleep(t)
     
-def join(curclass):
+def join(curclass = []):
     driver = webdriver.Chrome()
 
     #window1 - Yes i want to sign in
@@ -82,6 +80,10 @@ def join(curclass):
             print("Fucked up between confirming audio and joining")
         driver.quit()
         print(f"Leaving lecture {time.localtime().tm_hour}:{time.localtime().tm_min}")
+    else:
+        print('Using function not on main')
+        return driver
+
     
 while __name__ == '__main__':
     clock = time.localtime()
