@@ -17,10 +17,27 @@ def set_timer(hr=24, min=0):
     hours = hr - time.localtime().tm_hour
     mins = min - time.localtime().tm_min
     t=((hours * 60)+mins)*60
+    print('sleeping for ', t ,'seconds')
     time.sleep(t)
     
 def join(curclass = []):
-    driver = webdriver.Chrome()
+    print('joining', curclass)
+    user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36"
+
+    options = webdriver.ChromeOptions()
+    options.headless = True
+    options.add_argument(f'user-agent={user_agent}')
+    options.add_argument("--window-size=1920,1080")
+    options.add_argument('--ignore-certificate-errors')
+    options.add_argument('--allow-running-insecure-content')
+    options.add_argument("--disable-extensions")
+    options.add_argument("--proxy-server='direct://'")
+    options.add_argument("--proxy-bypass-list=*")
+    options.add_argument("--start-maximized")
+    options.add_argument('--disable-gpu')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--no-sandbox')
+    driver = webdriver.Chrome(options=options)
 
 #    #window1 - Yes i want to sign in
     driver.get("https://www.microsoft.com/en-ww/microsoft-365/microsoft-teams/log-in")
@@ -44,16 +61,16 @@ def join(curclass = []):
     #window4 - yes use the fucking web app
     #driver.find_element_by_xpath('/html/body/promote-desktop/div/div/div/div[1]/div[2]/div/a').click()
     #time.sleep(3)
-    driver.find_element_by_xpath('//*[@id="toast-container"]/div/div/div[2]/div/button[2]').click()
+    #driver.find_element_by_xpath('//*[@id="toast-container"]/div/div/div[2]/div/button[2]').click()
     if __name__ == "__main__":
         #find a team
         path = driver.find_elements_by_class_name("team-card")
         print("Searching for appropriate team out of "+str(len(path)))
         for card in path:
             try:
-                if card.get_attribute("data-tid") == curclass[0]:
+                if card.get_attribute("data-tid") == curclass[1]:
                     card.click()
-                    print("Found team")
+                    print("Found team" , curclass[1])
             except:
                 continue
 
@@ -75,7 +92,7 @@ def join(curclass = []):
             time.sleep(3)
             driver.find_element_by_class_name("join-btn").click()
             print("Joined lecture")
-            time.sleep(curclass[4]*60)
+            time.sleep(curclass[5]*60)
         except:
             print("Fucked up between confirming audio and joining")
         driver.quit()
@@ -92,9 +109,26 @@ while __name__ == "__main__":
     if res == []:
         set_timer()
         continue
-    bst = res[0]
+
+    mintime = time.localtime().tm_hour * 60 + time.localtime().tm_min
+    bst = None
+    nxtbst = None
+    nxtbstv = 1440
+    print(res)
     for class_ in res:
-        if clock.tm_hour <=class_[2] <= bst[2]:
+        ctime = class_[3] * 60 + class_[4]
+        print(class_[1],mintime, ctime, mintime + class_[5])
+        if (ctime <=mintime < ctime + class_[5]):
             bst = class_
-    set_timer(bst[2], bst[3])
+        if ctime - mintime < nxtbstv:
+            nxtbstv = ctime - mintime
+            nxtbst = class_
+    if bst == None:
+
+        set_timer(nxtbst[3], nxtbst[4])
     join(bst)
+
+
+
+#TODO
+#   convert all times to minutes when checking for something
