@@ -87,10 +87,11 @@ def join(curclass = []):
     
 while __name__ == "__main__":
     clock = time.localtime()
-    cur.execute(f"select * from TIMETABLE where day_of_week ={clock.tm_wday};")
+    cur.execute(f"select * from TIMETABLE where day_of_the_week ={clock.tm_wday};")
     res = cur.fetchall()
     if res == []:
         set_timer()
+        continue
     bst = res[0]
     for class_ in res:
         if clock.tm_hour <=class_[2] <= bst[2]:
