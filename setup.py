@@ -18,7 +18,9 @@ def creds():
 def setup_database():
     conn = sqlite3.connect('table.db')
     conn.execute('''CREATE TABLE TIMETABLE
-                 (label TEXT PRIMARY KEY   NOT NULL,
+
+                 (id id INT PRIMARY KEY UNIQUE,
+                  label TEXT   NOT NULL,
                   day_of_the_week INT,
                   starting_hour INT,
                   starting_minute INT,
@@ -34,16 +36,17 @@ hlp = '''
 # Default use tries to create a table, if you use -c, it also takes your credentials 
 ###########################
 '''
-if sys.argv[1] == ("--creds" or "-c"):
+if ("--creds" or "-c") in sys.argv:
     creds()
-elif(sys.argv[1]==("-h" or "--help")):
+    exit()
+elif(("-h" or "--help") in sys.argv):
     print(hlp)
     exit()
-elif(sys.argv[1]==("-t" or "--table-setup")):
+elif(("-t" or "--table-setup") in sys.argv):
     setup_database()
     print("Database created")
     exit()
-elif(sys.argv[1] == ("--fill-table" or "-f")):
+elif(("--fill-table" or "-f") in sys.argv):
     driver = join()
     table=[]
     weekdays = ["Monday", "Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
@@ -59,30 +62,30 @@ elif(sys.argv[1] == ("--fill-table" or "-f")):
         print("Operating on: "+ name)
         card.click()
         time.sleep(10)
-        print("Looking for label")
+        print("Looking for label_")
         try:
-            label = driver.find_element_by_class_name("time")
+            label_ = driver.find_element_by_class_name("time")
         except NoSuchElementException:
-            print("No label found for "+name)
+            print("No label_ found for "+name)
             driver.back()
             time.sleep(10)
             continue 
-        print("label found: "+ label.text+"\nParsing commences...")
-        label = label.text.split(" ")
-        if(label[1]!="every"):
+        print("label_ found: "+ label_.text+"\nParsing commences...")
+        label_ = label_.text.split(" ")
+        if(label_[1]!="every"):
             print("format not yet supported")
             driver.back()
             time.sleep(10)
             continue
-        label=label[2:]
+        label_=label_[2:]
         #setting day 
         for x in range(7):
-            if(weekdays[x]==label[0]):
+            if(weekdays[x]==label_[0]):
                 print("Found day")
                 arr[1].append(x)
                 arr[2].append(x)
         #setting stating time
-        stime = label[1][1:].split(":")
+        stime = label_[1][1:].split(":")
         arr[1].append(int(stime[0]))
         arr[1].append(int(stime[1]))
         #setting ending time
@@ -98,8 +101,12 @@ elif(sys.argv[1] == ("--fill-table" or "-f")):
         time.sleep(10)
 
     conn = sqlite3.connect('table.db')
+    c = conn.cursor()
+    it = 0
     for record in table:
-        conn.execute(f"INSERT INTO TIMETABLE ( label , day_of_the_week, starting_hour, starting_minute, lenght) VALUES ({record[0]},{record[1][0]},{record[1][1]},{record[1][2]},90)")
+        print(record[0], record[1][0], record[1][1], record[1][2])
+        c.execute(f"INSERT INTO TIMETABLE VALUES ('{it},{record[0][0]}',{record[1][0]},{record[1][1]},{record[1][2]},90);")
+        it = it + 1
     conn.commit()
     print("Records created")
     conn.close()

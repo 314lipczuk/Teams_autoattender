@@ -11,7 +11,7 @@ f = open(".pb.txt", "r")
 crds = f.read()
 f.close()
 crds = crds.split(":",1)
-crds[1] = crds[1][0:-1]
+#crds[1] = crds[1][0:-1]
 
 def set_timer(hr=24, min=0):
     hours = hr - time.localtime().tm_hour
@@ -22,15 +22,15 @@ def set_timer(hr=24, min=0):
 def join(curclass = []):
     driver = webdriver.Chrome()
 
-    #window1 - Yes i want to sign in
+#    #window1 - Yes i want to sign in
     driver.get("https://www.microsoft.com/en-ww/microsoft-365/microsoft-teams/log-in")
     driver.find_element_by_xpath('/html/body/section/div[2]/div/section/div/div[1]/div/div/div/div/div[1]/a').click()
     time.sleep(3)
 
     #window1 - give email
     driver.switch_to.window(driver.window_handles[1])
-    driver.find_element_by_xpath('/html/body/div/form[1]/div/div/div[1]/div[2]/div[2]/div/div/div/div[2]/div[2]/div/input[1]').send_keys(f"{crds[0]}")
-    driver.find_element_by_xpath('/html/body/div/form[1]/div/div/div[1]/div[2]/div[2]/div/div/div/div[4]/div/div/div/div/input').click()
+    driver.find_element_by_class_name('text-box').send_keys(f"{crds[0]}")
+    driver.find_element_by_class_name('ext-button').click()
     time.sleep(3)
 
     #window2 - logging for student mail
@@ -40,10 +40,10 @@ def join(curclass = []):
 
     #window3 - dont stay signed in
     driver.find_element_by_xpath('/html/body/div/form/div/div/div[1]/div[2]/div/div[2]/div/div[3]/div[2]/div/div/div[1]/input').click()
-    time.sleep(3)
+    time.sleep(10)
     #window4 - yes use the fucking web app
-    driver.find_element_by_xpath('/html/body/promote-desktop/div/div/div/div[1]/div[2]/div/a').click()
-    time.sleep(3)
+    #driver.find_element_by_xpath('/html/body/promote-desktop/div/div/div/div[1]/div[2]/div/a').click()
+    #time.sleep(3)
     driver.find_element_by_xpath('//*[@id="toast-container"]/div/div/div[2]/div/button[2]').click()
     if __name__ == "__main__":
         #find a team
@@ -85,15 +85,15 @@ def join(curclass = []):
         return driver
 
     
-while __name__ == '__main__':
+while __name__ == "__main__":
     clock = time.localtime()
     cur.execute(f"select * from TIMETABLE where day_of_week ={clock.tm_wday};")
     res = cur.fetchall()
     if res == []:
         set_timer()
     bst = res[0]
-    for class in res:
-        if clock.tm_hour <=class[2] <= bst[2]:
-            bst = class
+    for class_ in res:
+        if clock.tm_hour <=class_[2] <= bst[2]:
+            bst = class_
     set_timer(bst[2], bst[3])
     join(bst)
