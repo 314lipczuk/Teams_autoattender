@@ -1,7 +1,7 @@
 from selenium import webdriver
 import time
 import sqlite3
-
+import sys
 #setting up database stuff
 db = sqlite3.connect('table.db')
 cur = db.cursor()
@@ -12,6 +12,10 @@ crds = f.read()
 f.close()
 crds = crds.split(":",1)
 #crds[1] = crds[1][0:-1]
+global head
+head = False
+if("--headless") in sys.argv:
+    head = True
 
 def set_timer(hr=24, min=0):
     hours = hr - time.localtime().tm_hour
@@ -25,7 +29,7 @@ def join(curclass = []):
     user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36"
 
     options = webdriver.ChromeOptions()
-    options.headless = True
+    options.headless = head
     options.add_argument(f'user-agent={user_agent}')
     options.add_argument("--window-size=1920,1080")
     options.add_argument('--ignore-certificate-errors')
@@ -58,7 +62,7 @@ def join(curclass = []):
     #window3 - dont stay signed in
     driver.find_element_by_xpath('/html/body/div/form/div/div/div[1]/div[2]/div/div[2]/div/div[3]/div[2]/div/div/div[1]/input').click()
     time.sleep(10)
-    #window4 - yes use the fucking web app
+    #window4 - confirm using webapp, if looking for this element gives u error, comment those 2/3 lines
     #driver.find_element_by_xpath('/html/body/promote-desktop/div/div/div/div[1]/div[2]/div/a').click()
     #time.sleep(3)
     #driver.find_element_by_xpath('//*[@id="toast-container"]/div/div/div[2]/div/button[2]').click()
