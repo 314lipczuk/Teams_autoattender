@@ -4,3 +4,5 @@ venv
 __pychache__
 __pycache__
 table.json
+test.py
+table.db
