@@ -3,7 +3,7 @@ import json
 import sys
 import time
 import sqlite3
-from new_bot import join
+from new_bot.Bot() import launchTeams
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 
@@ -47,7 +47,7 @@ elif(("-t" or "--table-setup") in sys.argv):
     print("Database created")
     exit()
 elif(("--fill-table" or "-f") in sys.argv):
-    driver = join()
+    driver = launchTeams()
     table=[]
     weekdays = ["Monday", "Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
     all_cards = driver.find_elements_by_class_name("team-card")
