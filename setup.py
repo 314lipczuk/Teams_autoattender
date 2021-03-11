@@ -112,6 +112,8 @@ elif(("--fill-table" or "-f") in sys.argv):
         table.append(arr)
         driver.back()
         time.sleep(7)
+    
+    driver.quit()
 
     conn = sqlite3.connect('table.db')
     c = conn.cursor()
@@ -129,3 +131,4 @@ elif(("--fill-table" or "-f") in sys.argv):
     f = open("table.json","w")
     f.write(tablejson)
     f.close()
+    driver.quit()
