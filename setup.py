@@ -1,4 +1,5 @@
 from selenium import webdriver
+import selenium
 import json
 import sys
 import time
@@ -6,6 +7,12 @@ import sqlite3
 import new_bot
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
+
+
+def fillDefault(arr):
+    arr[1] = [0,0,0]
+    arr[2] = [0,0,0]
+    return arr
 
 def creds():
     f = open(".pb.txt", "w")
@@ -49,11 +56,14 @@ elif(("-t" or "--table-setup") in sys.argv):
 elif(("--fill-table" or "-f") in sys.argv):
     driver =new_bot.Bot().launchTeams()
     table=[]
+    driver.find_elements_by_class_name('team-type-header')[1].click()
     weekdays = ["Monday", "Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
-    all_cards = driver.find_elements_by_class_name("team-card")
-    for x in range(len(all_cards)):
-        print("Chceking card nr: ", x+1)
-        cards = driver.find_elements_by_class_name("team-card")
+    current_teams = driver.find_element_by_id("favorite-teams-panel")
+    cards = current_teams.find_elements_by_class_name("team-card")
+    for x in range(len(cards)):
+        print("Checking card nr: ", x+1)
+        current_teams = driver.find_element_by_id("favorite-teams-panel")
+        cards = current_teams.find_elements_by_class_name("team-card")
         card = cards[x]
         arr = [[],[],[]]
         name = card.get_attribute("data-tid")
@@ -61,21 +71,24 @@ elif(("--fill-table" or "-f") in sys.argv):
     
         print("Operating on: "+ name)
         card.click()
-        time.sleep(10)
+        time.sleep(7)
         print("Looking for label_")
         try:
             label_ = driver.find_element_by_class_name("time")
         except NoSuchElementException:
-            print("No label_ found for "+name)
+            print("No label_ found for "+name+", setting default values")
+            table.append(fillDefault(arr))
             driver.back()
-            time.sleep(10)
+            time.sleep(7)
             continue 
         print("label_ found: "+ label_.text+"\nParsing commences...")
         label_ = label_.text.split(" ")
         if(label_[1]!="every"):
-            print("format not yet supported")
+            print("format not yet supported, filling default")
+            table.append(fillDefault(arr))
             driver.back()
-            time.sleep(10)
+            driver.back()
+            time.sleep(7)
             continue
         label_=label_[2:]
         #setting day 
@@ -98,14 +111,15 @@ elif(("--fill-table" or "-f") in sys.argv):
         arr[2].append(stime[1])
         table.append(arr)
         driver.back()
-        time.sleep(10)
+        time.sleep(7)
 
     conn = sqlite3.connect('table.db')
     c = conn.cursor()
     it = 0
+    print(table)
     for record in table:
         print(record[0], record[1][0], record[1][1], record[1][2])
-        c.execute(f"INSERT INTO TIMETABLE VALUES ('{it},{record[0][0]}',{record[1][0]},{record[1][1]},{record[1][2]},90);")
+        c.execute(f"INSERT INTO TIMETABLE VALUES ({it},'{record[0][0]}',{record[1][0]},{record[1][1]},{record[1][2]},90);")
         it = it + 1
     conn.commit()
     print("Records created")
