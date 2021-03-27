@@ -2,16 +2,21 @@ from selenium import webdriver
 import time
 import sqlite3
 import sys
+import shlex
+import datetime
+import subprocess
 class Bot:
+    pulse_channel = 2
+    
     #read credentials
     f = open(".pb.txt", "r")
     crds = f.read()
     f.close()
     crds = crds.split(":",1)
     #crds[1] = crds[1][0:-1]
-    head = True
-    if("--verbose") in sys.argv:
-        head = False
+    head =False
+    if("--headless") in sys.argv:
+        head = True
     user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36"
     options = webdriver.ChromeOptions()
 
@@ -119,6 +124,11 @@ class Bot:
             time.sleep(3)
             driver.find_element_by_class_name("join-btn").click()
             print("Joined lecture")
+            _now = datetime.datetime.now()
+            _name =curclass[1]+"_"+str(_now.day) + ":"+str(_now.month)
+            _time = curclass[5]*60 - 180
+            _command = f"ffmpeg -video_size 924x668 -framerate  20 -f x11grab -i :0.0+0,100 -f pulse -ac {self.pulse_channel} -i 0 -t {_time} {_name}.mkv"
+            subprocess.Popen(shlex.split(_command))
             time.sleep(curclass[5]*60)
         except:
             print("Fucked up between confirming audio and joining")

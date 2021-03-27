@@ -1,5 +1,6 @@
 from selenium import webdriver
 import selenium
+import subprocess
 import json
 import sys
 import time
@@ -51,6 +52,7 @@ elif(("-h" or "--help") in sys.argv):
     exit()
 elif(("-t" or "--table-setup") in sys.argv):
     setup_database()
+    subprocess.run("mkdir ./recordings")
     print("Database created")
     exit()
 elif(("--fill-table" or "-f") in sys.argv):
