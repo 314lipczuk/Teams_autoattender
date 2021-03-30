@@ -7,7 +7,6 @@ import datetime
 import subprocess
 class Bot:
     pulse_channel = 2
-    
     #read credentials
     f = open(".pb.txt", "r")
     crds = f.read()
@@ -33,15 +32,6 @@ class Bot:
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--no-sandbox')
 
-    @staticmethod
-    def set_timer(hr=24, min=0):
-        hours = hr - time.localtime().tm_hour
-        mins = min - time.localtime().tm_min
-        t=((hours * 60)+mins)*60
-        print('sleeping for ', t ,'seconds')
-        time.sleep(t+30)
-        return 0
-
     def setup(self):
         db = sqlite3.connect('table.db')
         cur = db.cursor()
@@ -50,21 +40,32 @@ class Bot:
         cur.close()
         db.close()
         res = list(res)
-        for cls in res:
-            cls = list(cls)
-            cls[0] = cls[3]*60 + cls[4]
-        res.sort(key=lambda x: x[0])
-        return res
+        pres_class = None
+        for clss in res:
+            clss = list(clss)
+            print(clss)
+            if clss[3] == datetime.datetime.now().hour:
+                pres_class = clss
+        return pres_class
 
-    def loop(self): #Takes res from above and orders when to connect to which class
-        while True:
-            sched = self.setup()
-            while(sched != []):
-                self.set_timer(sched[0][3], sched[0][4])
-                currentcls = sched.pop(0)
-                drv = self.launchTeams()
-                self.join(drv,currentcls)
-            self.set_timer()
+   # def loop(self): #Takes res from above and orders when to connect to which class
+   #     while True:
+   #         sched = self.setup()
+   #         while(sched != []):
+   #             self.set_timer(sched[0][3], sched[0][4])
+   #             currentcls = sched.pop(0)
+   #             drv = self.launchTeams()
+   #             self.join(drv,currentcls)
+   #         self.set_timer()
+
+    def start(self):
+        clss= self.setup()
+        if clss == None:
+            print('No class right now')
+            quit()
+        drv = self.launchTeams()
+        self.join(drv, clss)
+
 
     def launchTeams(self):
         driver = webdriver.Chrome(options=self.options)
@@ -97,13 +98,11 @@ class Bot:
     def join(self, driver, curclass):
         path = driver.find_elements_by_class_name("team-card")
         print("Searching for appropriate team out of "+str(len(path)))
+        print(curclass)
         for card in path:
-            try:
-                if card.get_attribute("data-tid") == curclass[1]:
-                    card.click()
-                    print("Found team" , curclass[1])
-            except:
-                continue
+            if card.get_attribute("data-tid") == curclass[1]:
+                card.click()
+                print("Found team" , curclass[1])
 
         #find a team
         time.sleep(3)
@@ -137,4 +136,4 @@ class Bot:
 
 if __name__ == "__main__":
     bot = Bot()
-    bot.loop()
+    bot.start()
